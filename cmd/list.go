@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/lucaarn/cli-todo-list/todo"
+	"github.com/mergestat/timediff"
 	"os"
 	"text/tabwriter"
 
@@ -23,7 +24,7 @@ var listCmd = &cobra.Command{
 
 		todos := todo.Load()
 		for _, todo := range todos {
-			fmt.Fprintf(writer, "%d\t%s\t%s\t%t\n", todo.ID, todo.Description, todo.CreatedAt, todo.IsComplete)
+			fmt.Fprintf(writer, "%d\t%s\t%s\t%t\n", todo.ID, todo.Description, timediff.TimeDiff(todo.CreatedAt), todo.IsComplete)
 		}
 
 		writer.Flush()
