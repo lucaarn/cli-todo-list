@@ -1,27 +1,34 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/lucaarn/cli-todo-list/todo"
 	"github.com/spf13/cobra"
+	"log"
+	"strconv"
 )
 
 // deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "delete <id>",
+	Short: "deletes task by given id",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("delete called")
+		id, err := strconv.Atoi(args[0])
+		if err != nil {
+			log.Fatalln("id is not a number", err)
+		}
+
+		var todos todo.TodoList
+		for _, todo := range todo.Load() {
+			if todo.ID != id {
+				todos = append(todos, todo)
+			}
+		}
+
+		todos.Save()
 	},
 }
 
