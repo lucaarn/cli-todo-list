@@ -8,20 +8,19 @@ import (
 	"time"
 )
 
-type todo struct {
+type Todo struct {
 	ID          int
 	Description string
 	CreatedAt   time.Time
 	IsComplete  bool
 }
 
-type todoList []todo
+type TodoList []Todo
 
-func (t *todoList) SaveTasks() {
+func (t *TodoList) Save() {
 	file, err := os.Create("todos.csv")
 	if err != nil {
 		log.Fatalln("failed to open file", err)
-		return
 	}
 	defer file.Close()
 
@@ -39,7 +38,48 @@ func (t *todoList) SaveTasks() {
 		err := writer.Write(record)
 		if err != nil {
 			log.Fatalln("failed to write to file", err)
-			return
 		}
 	}
+}
+
+func Load() TodoList {
+	file, err := os.Open("todos.csv")
+	if err != nil {
+		log.Fatalln("failed to open file", err)
+	}
+	defer file.Close()
+
+	var todos TodoList
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		log.Fatalln("failed to read file", err)
+	}
+
+	for _, record := range records {
+		id, err := strconv.Atoi(record[0])
+		if err != nil {
+			log.Fatalln("failed to convert id to int", err)
+		}
+
+		createdAt, err := time.Parse(time.RFC3339, record[2])
+		if err != nil {
+			log.Fatalln("failed to convert createdAt to time", err)
+		}
+
+		isComplete, err := strconv.ParseBool(record[3])
+		if err != nil {
+			log.Fatalln("failed to convert isComplete to bool", err)
+		}
+
+		todos = append(todos, Todo{
+			ID:          id,
+			Description: record[1],
+			CreatedAt:   createdAt,
+			IsComplete:  isComplete,
+		})
+	}
+
+	return todos
 }
