@@ -1,27 +1,34 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/lucaarn/cli-todo-list/todo"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
-	Use:   "add",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Use:   "add <description>",
+	Short: "add a task to the list",
+	Long: `Adds a task to the list with the given description.
+The command automatically appends the id, creation date and marks the task as not completed.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Example:
+add "learn golang"`,
+	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("add called")
+		description := args[0]
+		todos := todo.Load()
+		todos = append(todos, todo.Todo{
+			ID:          len(todos) + 1,
+			Description: description,
+			CreatedAt:   time.Now(),
+			IsComplete:  false,
+		})
+		todos.Save()
 	},
 }
 
