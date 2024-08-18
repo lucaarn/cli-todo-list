@@ -1,11 +1,13 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"github.com/lucaarn/cli-todo-list/todo"
+	"os"
+	"text/tabwriter"
 
 	"github.com/spf13/cobra"
 )
@@ -13,15 +15,18 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Lists all your available tasks",
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+		writer := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintln(writer, "ID\tTask\tCreated\tDone")
+
+		todos := todo.Load()
+		for _, todo := range todos {
+			fmt.Fprintf(writer, "%d\t%s\t%s\t%t\n", todo.ID, todo.Description, todo.CreatedAt, todo.IsComplete)
+		}
+
+		writer.Flush()
 	},
 }
 

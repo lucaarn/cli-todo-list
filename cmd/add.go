@@ -12,13 +12,8 @@ import (
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add <description>",
-	Short: "add a task to the list",
-	Long: `Adds a task to the list with the given description.
-The command automatically appends the id, creation date and marks the task as not completed.
-
-Example:
-add "learn golang"`,
-	Args: cobra.ExactArgs(1),
+	Short: "Add a task to the list with the given description",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		description := args[0]
 		todos := todo.Load()
