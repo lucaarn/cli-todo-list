@@ -18,7 +18,7 @@ var addCmd = &cobra.Command{
 		description := args[0]
 		todos := todo.Load()
 		todos = append(todos, todo.Todo{
-			ID:          len(todos) + 1,
+			ID:          todo.GetLatestID(todos) + 1,
 			Description: description,
 			CreatedAt:   time.Now(),
 			IsComplete:  false,

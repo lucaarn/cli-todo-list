@@ -1,27 +1,35 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
+	"github.com/lucaarn/cli-todo-list/todo"
+	"log"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )
 
 // completeCmd represents the complete command
 var completeCmd = &cobra.Command{
-	Use:   "complete",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "complete <id>",
+	Short: "marks task with given id as complete",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("complete called")
+		id, err := strconv.Atoi(args[0])
+		if err != nil {
+			log.Fatalln("id is not a number", err)
+		}
+
+		todos := todo.Load()
+		for i := range todos {
+			if todos[i].ID == id {
+				todos[i].IsComplete = true
+			}
+		}
+
+		todos.Save()
 	},
 }
 

@@ -13,10 +13,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var allTasks bool
+
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Lists all your available tasks",
+	Short: "Lists all your non-completed tasks",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		writer := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
@@ -24,7 +26,9 @@ var listCmd = &cobra.Command{
 
 		todos := todo.Load()
 		for _, todo := range todos {
-			fmt.Fprintf(writer, "%d\t%s\t%s\t%t\n", todo.ID, todo.Description, timediff.TimeDiff(todo.CreatedAt), todo.IsComplete)
+			if !todo.IsComplete || allTasks {
+				fmt.Fprintf(writer, "%d\t%s\t%s\t%t\n", todo.ID, todo.Description, timediff.TimeDiff(todo.CreatedAt), todo.IsComplete)
+			}
 		}
 
 		writer.Flush()
@@ -32,6 +36,7 @@ var listCmd = &cobra.Command{
 }
 
 func init() {
+	listCmd.Flags().BoolVarP(&allTasks, "all", "a", false, "List all tasks (including tasks marked as complete")
 	rootCmd.AddCommand(listCmd)
 
 	// Here you will define your flags and configuration settings.

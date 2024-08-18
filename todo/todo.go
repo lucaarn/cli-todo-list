@@ -83,3 +83,7 @@ func Load() TodoList {
 
 	return todos
 }
+
+func GetLatestID(list TodoList) int {
+	return list[len(list)-1].ID
+}
